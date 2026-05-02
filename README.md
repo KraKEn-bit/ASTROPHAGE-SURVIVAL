@@ -1,6 +1,6 @@
 # Astrophage Survival
 
-A browser sci-fi survival experience built around **Phaser 3** (2D arcade physics), vanilla JavaScript, and **Howler.js** for audio. The project mixes ground phases (vehicle gameplay), cinematic and conversation scenes, and space-action phases—all wired through `window.AG` shared state between scenes.
+A browser sci-fi survival experience built around **Phaser 3** (2D arcade physics), JavaScript, and **Howler.js** for audio. The project mixes ground phases (vehicle gameplay), cinematic and conversation scenes, and space-action phases—all wired through `window.AG` shared state between scenes.
 
 **Working title / boot theme:** Project Hail Mary–style terminal intro (see `index.html`).
 
@@ -12,12 +12,12 @@ Files live in **`screenshots/`** at the repo root.
 
 | | |
 |:-:|:-:|
-| **1** — _your caption_ | **2** — _your caption_ |
+| **1** — Phase-1 | **2** — Phase-2 |
 | ![](./screenshots/image-1.png) | ![](./screenshots/image-2.png) |
 
 | | |
 |:-:|:-:|
-| **3** — _your caption_ | **4** — _your caption_ |
+| **3** — Phase-3 | **4** — Phase-4 |
 | ![](./screenshots/Image-4.png) | ![](./screenshots/image-5.png) |
 
 _On case-sensitive systems (e.g. Linux), keep the exact filename `Image-4.png` or rename it to `image-4.png` and update this table._
@@ -58,6 +58,4 @@ python -m http.server 8080
 
 ---
 
-## License
 
-_Add your license here if you publish the repo._
