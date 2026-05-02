@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 4 - Lab</title>
+  <script async src="https://vibej.am/2026/widget.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #02050a;
+      font-family: 'Share Tech Mono', monospace;
+      color: #4ee0e3;
+    }
+
+    /* Terminal Cutscene Overlay */
+    #terminal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle, #0a1122 0%, #000 100%);
+      z-index: 2000;
+      display: flex;
+      flex-direction: row;
+      gap: 100px;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 2s ease-in-out;
+    }
+
+    /* Biological Scanner HUD */
+    .bio-scanner-hud {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      opacity: 0.8;
+    }
+
+    .scanner-ring-outer {
+      width: 180px;
+      height: 180px;
+      border: 2px dashed #4ee0e3;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: spin 12s linear infinite;
+      box-shadow: 0 0 30px rgba(78, 224, 227, 0.1);
+    }
+
+    .scanner-ring-inner {
+      width: 120px;
+      height: 120px;
+      border: 3px solid transparent;
+      border-top-color: #ff9f43;
+      border-bottom-color: #ff9f43;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: spin-reverse 6s linear infinite;
+    }
+
+    .astro-core {
+      font-size: 50px;
+      color: #ff9f43;
+      text-shadow: 0 0 15px #ff9f43;
+      animation: pulse 1.5s ease-in-out infinite, spin-reverse 12s linear infinite;
+    }
+
+    .scanner-data {
+      font-family: 'Share Tech Mono', monospace;
+      color: #a9c2db;
+      font-size: 16px;
+      line-height: 1.8;
+      border: 1px solid rgba(78, 224, 227, 0.3);
+      background: rgba(5, 10, 20, 0.6);
+      padding: 15px;
+      width: 250px;
+    }
+
+    .bar-chart {
+      display: flex;
+      gap: 5px;
+      margin-top: 15px;
+      height: 40px;
+      align-items: flex-end;
+    }
+
+    .bar {
+      width: 20%;
+      background-color: #4ee0e3;
+      animation: equalize 1s ease-in-out infinite alternate;
+    }
+
+    .blink-fast {
+      animation: blink 0.5s infinite;
+    }
+
+    .intro-spore {
+      position: absolute;
+      border-radius: 50%;
+      background: #ff9f43;
+      box-shadow: 0 0 15px #ff9f43, 0 0 30px #ff9f43;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 100;
+      animation: floatSpore linear infinite;
+    }
+
+    .log-container {
+      width: 800px;
+      height: 400px;
+      border-left: 3px solid #ff9f43;
+      padding-left: 20px;
+      overflow: hidden;
+    }
+
+    .log-line {
+      font-size: 18px;
+      line-height: 2;
+      color: #a9c2db;
+      text-shadow: 0 0 5px rgba(169, 194, 219, 0.5);
+    }
+
+    .telemetry-readout {
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      color: #2ed573;
+      font-family: "Share Tech Mono", monospace;
+      font-size: 16px;
+      line-height: 2;
+      opacity: 0.8;
+      text-shadow: 0 0 8px rgba(46, 213, 115, 0.6);
+      text-align: left;
+    }
+
+    .dust-mote {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+      pointer-events: none;
+      opacity: 0;
+      animation: floatDust linear infinite;
+    }
+
+    .cursor {
+      display: inline-block;
+      animation: cursorBlink 0.8s steps(1) infinite;
+    }
+
+    .crack-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: url('assets/crack.png') center/cover no-repeat;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    /* Gameplay UI */
+    #game-ui {
+      display: none;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+    }
+
+    .ui-panel {
+      background: rgba(5, 10, 20, 0.8);
+      border: 1px solid #4a90e2;
+      padding: 15px;
+      width: 250px;
+    }
+
+    canvas {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    #threejs-canvas {
+      z-index: 0;
+      display: none;
+    }
+
+    #lab-canvas {
+      z-index: 10;
+    }
+
+    @keyframes cursorBlink {
+      0%, 50% {
+        opacity: 1;
+      }
+      51%, 100% {
+        opacity: 0;
+      }
+    }
+
+    @keyframes blink {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.35;
+      }
+    }
+
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes spin-reverse {
+      100% {
+        transform: rotate(-360deg);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
+    }
+
+    @keyframes equalize {
+      0% {
+        height: 10px;
+      }
+      100% {
+        height: 40px;
+      }
+    }
+
+    @keyframes floatSpore {
+      0% {
+        transform: translateY(100vh) translateX(0) scale(0.5);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.6;
+      }
+      90% {
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(-20vh) translateX(50px) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    @keyframes floatDust {
+      0% {
+        transform: translateY(0) translateX(0) scale(0.5);
+        opacity: 0;
+      }
+      50% {
+        opacity: 0.65;
+      }
+      100% {
+        transform: translateY(-120px) translateX(60px) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    @keyframes portalPulse {
+      0% { box-shadow: 0 0 20px rgba(156, 136, 255, 0.4); transform: scale(1); }
+      50% { box-shadow: 0 0 50px rgba(156, 136, 255, 0.8); transform: scale(1.05); }
+      100% { box-shadow: 0 0 20px rgba(156, 136, 255, 0.4); transform: scale(1); }
+    }
+
+  </style>
+</head>
+<body>
+  <div id="sunrise-overlay" style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at 50% 30%, rgba(255, 235, 59, 0.25) 0%, rgba(255, 159, 67, 0.1) 50%, transparent 100%); opacity: 0; transition: opacity 6s ease-in-out; pointer-events: none; z-index: 1500; display: none;"></div>
+  <div id="terminal-overlay">
+    <div class="log-container" id="log-box"></div>
+    <div class="bio-scanner-hud">
+      <div class="scanner-ring-outer">
+        <div class="scanner-ring-inner">
+          <span class="astro-core">⚛</span>
+        </div>
+      </div>
+      <div class="scanner-data">
+        <div class="data-row">ANALYSIS: <span class="blink-fast" style="color:#ff9f43;">ASTROPHAGE</span></div>
+        <div class="data-row">MULTIPLICATION RATE: <span style="color:#ff5252;">+4,000%</span></div>
+        <div class="bar-chart">
+          <div class="bar" style="animation-delay: 0.1s;"></div>
+          <div class="bar" style="animation-delay: 0.3s;"></div>
+          <div class="bar" style="animation-delay: 0.5s;"></div>
+          <div class="bar" style="animation-delay: 0.2s;"></div>
+          <div class="bar" style="animation-delay: 0.4s;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="crack-overlay" id="crack-effect"></div>
+  </div>
+
+  <div id="game-ui">
+    <div class="ui-panel">
+      <h3 style="margin-top:0; color:#ffeb3b;">OPERATOR: <span id="lab-username">UNKNOWN</span></h3>
+      <p style="color:#ff5252; font-weight:bold;">SUN INTEGRITY: <span id="sun-status">100%</span></p>
+      <p style="color:#ff9f43; font-weight:bold; margin-top: 10px;">MQ-07 SENSOR (TOXICITY): <span id="gas-sensor">NORMAL</span></p>
+      <p>CONTROLS: WASD to Move</p>
+    </div>
+    <div class="ui-panel" style="margin-top: 20px;">
+      <h3 style="margin-top:0; color:#4ee0e3;">LAB CONTROLS</h3>
+      <div id="controls-container" style="display: flex; flex-direction: column; gap: 10px;">
+        <button id="btn-light" style="background: #222; color: #fff; border: 1px solid #ffeb3b; padding: 10px; cursor: pointer; font-family: inherit;">[1] UV LIGHT: OFF</button>
+        <button id="btn-co2" style="background: #222; color: #fff; border: 1px solid #ff5252; padding: 10px; cursor: pointer; font-family: inherit;">[2] CO2 VALVE: OFF</button>
+        <button id="btn-nitro" style="background: #222; color: #fff; border: 1px solid #4ee0e3; padding: 10px; cursor: pointer; font-family: inherit;">[3] LIQUID NITROGEN: OFF</button>
+        <button id="btn-scan" style="background: #222; color: #fff; border: 1px solid #9c88ff; padding: 10px; cursor: pointer; font-family: inherit; margin-top: 10px;">[4] RUN CV CLASSIFICATION</button>
+        <button onclick="openManual()" type="button" style="width: 100%; padding: 8px; background: transparent; border: 1px dashed #ffeb3b; color: #ffeb3b; font-family: inherit; font-size: 14px; cursor: pointer; margin-top: 15px; text-align: left; transition: background 0.2s;">
+          [M] OPEN LAB MANUAL
+        </button>
+      </div>
+      <p style="font-size: 12px; margin-top: 15px; color: #888;">Use number keys 1, 2, 3 to toggle.</p>
+    </div>
+  </div>
+
+  <div id="synthesis-ui" style="position: absolute; top: 20px; right: 20px; z-index: 1000; display: none; width: 320px;">
+    <div class="ui-panel" style="border-color: #2ed573; margin-bottom: 20px;">
+      <h3 style="margin-top:0; color:#2ed573;">MOLECULAR SYNTHESIS</h3>
+      <p style="font-size: 12px; color: #a9c2db;">Add atoms to the chamber to synthesize compounds.</p>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+        <button onclick="addAtom('C')" style="flex:1; background:#333; color:#fff; border:1px solid #ffeb3b; padding:8px; cursor:pointer;">+C (Carbon)</button>
+        <button onclick="addAtom('H')" style="flex:1; background:#333; color:#fff; border:1px solid #4a90e2; padding:8px; cursor:pointer;">+H (Hydrogen)</button>
+        <button onclick="addAtom('N')" style="flex:1; background:#333; color:#fff; border:1px solid #9c88ff; padding:8px; cursor:pointer;">+N (Nitrogen)</button>
+      </div>
+
+      <div style="background: #000; padding: 10px; border: 1px inset #555; margin-bottom: 15px; font-family: monospace; color: #fff;">
+        BUFFER: <span id="atom-buffer" style="color: #ff9f43;">EMPTY</span>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button onclick="synthesize()" style="flex:2; background:#2ed573; color:#000; border:none; padding:10px; cursor:pointer; font-weight:bold;">SYNTHESIZE</button>
+        <button onclick="clearBuffer()" style="flex:1; background:#ff5252; color:#fff; border:none; padding:10px; cursor:pointer;">CLEAR</button>
+      </div>
+    </div>
+
+    <div id="incubator-zone" style="width: 100%; min-height: 100px; border: 2px dashed #ffeb3b; background: rgba(255, 235, 59, 0.1); padding: 10px; box-sizing: border-box; color: #ffeb3b;">
+      <h4 style="margin: 0 0 10px 0; text-align: center;">INCUBATOR TANK</h4>
+      <div id="incubator-contents" style="display: flex; flex-wrap: wrap; gap: 5px; justify-content: center;"></div>
+    </div>
+
+    <div style="margin-top: 15px; border-top: 1px dashed #2ed573; padding-top: 10px;">
+      <p style="margin: 0 0 5px 0; font-size: 12px; color: #a9c2db;">SYSTEM FEEDBACK:</p>
+      <div id="sys-message" style="background: rgba(0, 0, 0, 0.6); border: 1px solid #555; padding: 10px; font-family: monospace; color: #a9c2db; font-size: 13px; line-height: 1.4; min-height: 40px;">
+        Awaiting molecular input...
+      </div>
+    </div>
+
+    <div style="margin-top: 12px;">
+      <button id="hint-toggle-btn" type="button" onclick="toggleHint()" style="background: rgba(156, 136, 255, 0.08); border: 1px solid #9c88ff; border-radius: 3px; padding: 5px 8px; cursor: pointer; color: #b8a9e8; font-family: inherit; font-size: 11px; font-weight: normal; width: 100%; text-align: left; line-height: 1.35; display: flex; align-items: flex-start; gap: 6px; transition: background 0.25s;">
+        <span style="font-size: 13px; flex-shrink: 0; line-height: 1.35;">💡</span>
+        <span style="flex: 1;">Click for a system hint if you can't figure it out.</span>
+      </button>
+
+      <div id="hint-content" style="display: none; margin-top: 8px; background: rgba(156, 136, 255, 0.05); border-left: 3px solid #9c88ff; padding: 8px 10px; border-radius: 0 3px 3px 0;">
+        <p style="margin: 0; font-size: 11px; color: #a9c2db; line-height: 1.45;">
+          The Base Blue Strain dies rapidly. To force evolution, turn on <strong>UV Light [1]</strong> and synthesize <strong>Nitrogen (N2)</strong> while the blue cells are still alive.
+          <br><br>
+          <span style="color: #2ed573;">Success breeds the <strong>Purple Strain</strong>! Bring the Astrophage near the purple cells to eradicate the swarm and save the Sun!</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div id="cv-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; background: rgba(5, 10, 20, 0.95); border: 2px solid #9c88ff; padding: 30px; z-index: 4000; display: none; font-family: 'Share Tech Mono', monospace; color: #a9c2db; box-shadow: 0 0 40px rgba(156, 136, 255, 0.3);">
+    <h2 style="color: #9c88ff; margin-top: 0;">[ INFERENCE ENGINE ]</h2>
+    <div id="cv-logs" style="height: 150px; overflow: hidden; margin-bottom: 20px; font-size: 14px; line-height: 1.6;"></div>
+    <button onclick="closeCVModal()" style="width: 100%; background: #9c88ff; color: #000; border: none; padding: 10px; cursor: pointer; font-weight: bold; display: none;" id="btn-close-cv">ACKNOWLEDGE</button>
+  </div>
+
+  <div id="lab-manual" style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5, 10, 20, 0.95); z-index: 5000; display: none; justify-content: center; align-items: center; font-family: 'Share Tech Mono', monospace; color: #a9c2db;">
+    <div style="width: 750px; border: 2px solid #4a90e2; padding: 40px; box-shadow: 0 0 30px rgba(74, 144, 226, 0.2); background: #050a14; position: relative;">
+      <div id="manual-page-1">
+        <h2 style="color: #ffeb3b; text-align: center; border-bottom: 1px solid #4a90e2; padding-bottom: 10px;">[ PROJECT HAIL MARY: LAB MANUAL - PAGE 1/3 ]</h2>
+
+        <h3 style="color: #ff9f43;">THE THREAT: ASTROPHAGE (Orange)</h3>
+        <p>Multiplying exponentially. They are draining the sun. Monitor the <strong>MQ-07 Sensor</strong> for atmospheric toxicity.</p>
+
+        <h3 style="color: #4a90e2;">ENVIRONMENTAL CONTROLS:</h3>
+        <ul style="line-height: 1.8;">
+          <li><strong>[1] UV LIGHT:</strong> Irradiates the room. Required to force genetic mutation.</li>
+          <li><strong>[2] CO2 VALVE:</strong> Triggers rapid Astrophage breeding (WARNING: HIGH RISK).</li>
+          <li><strong>[3] LIQUID NITROGEN:</strong> Freezes all organisms instantly.</li>
+          <li><strong>[4] RUN CV CLASSIFICATION:</strong> Activates the Neural Network to scan Astrophage for chemical vulnerabilities.</li>
+        </ul>
+
+        <p style="text-align: center; color: #ffeb3b; margin-top: 30px; font-weight: bold; animation: blink 1s infinite;">[ [A]/[D] OR ARROWS TO FLIP PAGES • [ENTER] TO CONTINUE ]</p>
+      </div>
+
+      <div id="manual-page-2" style="display: none;">
+        <h2 style="color: #ffeb3b; text-align: center; border-bottom: 1px solid #4a90e2; padding-bottom: 10px;">[ PROJECT HAIL MARY: LAB MANUAL - PAGE 2/3 ]</h2>
+
+        <h3 style="color: #2ed573;">THE SOLUTION: MOLECULAR SYNTHESIS</h3>
+        <p>You must construct compounds atom-by-atom to breed the predator (Taumoeba):</p>
+        <ol style="line-height: 1.8;">
+          <li><strong>RESEARCH:</strong> Press <strong>[4]</strong> to run the CV Scanner and discover the exact stoichiometric formulas needed.</li>
+          <li><strong>SYNTHESIZE:</strong> Add C (Carbon), H (Hydrogen), and N (Nitrogen) atoms to the buffer, then click <strong>SYNTHESIZE</strong> to create compounds.</li>
+          <li><strong>BREED BASE CULTURE:</strong> Synthesize the required compounds to spawn the Blue Taumoeba.</li>
+          <li><strong>FORCE EVOLUTION:</strong> Turn <strong>[1] UV LIGHT ON</strong>, then synthesize <strong>N2 (Nitrogen Gas)</strong>. 90% will die, but survivors will mutate into the hyper-aggressive Purple variant!</li>
+        </ol>
+
+        <p style="text-align: center; color: #ffeb3b; margin-top: 30px; font-weight: bold; animation: blink 1s infinite;">[ [A]/[D] OR ARROWS TO FLIP PAGES • [ENTER] TO CONTINUE ]</p>
+      </div>
+
+      <div id="manual-page-3" style="display: none;">
+        <h2 style="color: #ffeb3b; text-align: center; border-bottom: 1px solid #4a90e2; padding-bottom: 10px;">[ PROJECT HAIL MARY: LAB MANUAL - PAGE 3/3 ]</h2>
+
+        <h3 style="color: #ff5252;">CRITICAL RESEARCH NOTE: METABOLIC DECAY</h3>
+        <p>The <strong>Base Blue Strain</strong> has a fragile metabolism. They will consume one Astrophage and then expire. You cannot mutate a dead culture.</p>
+
+        <h3 style="color: #9c88ff;">THE WINNING STRATEGY:</h3>
+        <ul style="line-height: 1.8;">
+          <li><strong>PRE-HEATING:</strong> Turn <strong>[1] UV LIGHT ON</strong> before you even start synthesizing.</li>
+          <li><strong>THE WINDOW:</strong> Once you synthesize the Blue Strain, you have a <strong>limited window</strong> to introduce Nitrogen while they are still alive.</li>
+          <li><strong>EXECUTION:</strong> Synthesize the Base chemicals, then <strong>immediately</strong> prep and synthesize <strong>N2</strong> to catch the mutation.</li>
+        </ul>
+
+        <p style="text-align: center; color: #ffeb3b; margin-top: 30px; font-weight: bold; animation: blink 1s infinite;">[ [A]/[D] OR ARROWS TO FLIP PAGES • [ENTER] TO CONTINUE ]</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="vibe-jam-portal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(2, 5, 10, 0.95); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+    <h1 style="color: #9c88ff; font-family: 'Share Tech Mono', monospace; font-size: 48px; text-shadow: 0 0 20px #9c88ff; margin-bottom: 10px;">ASTROPHAGE ERADICATED</h1>
+    <p style="color: #2ed573; font-family: 'Share Tech Mono', monospace; font-size: 24px; margin-bottom: 40px;">THE SUN IS SAVED.</p>
+    
+    <button onclick="enterVibePortal()" style="background: transparent; border: 2px solid #9c88ff; color: #9c88ff; padding: 20px 40px; font-family: 'Share Tech Mono', monospace; font-size: 24px; cursor: pointer; box-shadow: 0 0 30px rgba(156, 136, 255, 0.4); animation: portalPulse 1.5s infinite; transition: all 0.3s ease;">
+        🌀 ENTER VIBE JAM 2026 PORTAL 🌀
+    </button>
+  </div>
+  <script>
+    window.enterVibePortal = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentUsername = urlParams.get("username") || "PILOT";
+        const myGameUrl = "https://darling-biscochitos-9725e4.netlify.app";
+
+        const portalUrl = `https://vibejam.cc/portal/2026?username=${encodeURIComponent(currentUsername)}&ref=${encodeURIComponent(myGameUrl)}`;
+        window.location.href = portalUrl;
+    };
+  </script>
+
+  <div id="credits-overlay" style="position: absolute; top: 100vh; left: 0; width: 100vw; height: 100vh; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; font-family: 'Share Tech Mono', monospace; z-index: 6000; text-align: center; transition: top 12s linear; pointer-events: none;">
+    <h1 style="font-size: 45px; color: #4ee0e3; margin-bottom: 20px; text-shadow: 0 0 20px rgba(78, 224, 227, 0.8); text-align: center; letter-spacing: 2px;">INSPIRED BY PROJECT HAIL MARY</h1>
+
+    <p style="font-size: 24px; margin-bottom: 10px; text-align: center; letter-spacing: 1px;">CURSOR VIBE JAM 2026</p>
+
+    <p style="font-size: 20px; color: #a9c2db; margin-bottom: 60px; text-align: center;">Core and Lead Developer : Rafsan Kabir Taaseen</p>
+
+    <p style="font-size: 18px; color: #7bed9f; margin-bottom: 5px; text-align: center;">Special Thanks to :</p>
+
+    <p style="font-size: 18px; color: #fff; margin-bottom: 100px; text-align: center;"><span id="credits-player-name">PILOT</span> and Our Beloved Rocky</p>
+
+    <h2 id="the-end-text" style="font-size: 70px; color: #ff9f43; text-shadow: 0 0 30px rgba(255, 159, 67, 0.8); opacity: 0; transition: opacity 4s ease-in; text-align: center; letter-spacing: 4px;">ASTROPHAGE<br><span style="font-size: 30px; color: #fff; display: block; margin-top: 15px; letter-spacing: 8px;">THE END</span></h2>
+  </div>
+
+  <canvas id="threejs-canvas"></canvas>
+  <canvas id="lab-canvas"></canvas>
+  <audio id="bgm-gameplay" src="gameplay_phase-4_Trimmed.ogg" loop></audio>
+  <audio id="bgm-ending" src="space_music_for_credit_trimmed.ogg"></audio>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

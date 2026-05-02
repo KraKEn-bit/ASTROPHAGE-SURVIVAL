@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phase 1 - Three.js Lobby</title>
+  <script async src="https://vibejam.cc/2026/widget.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div id="intro-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #050505; color: #39FF14; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; font-family: 'Courier New', Courier, monospace; text-align: center; padding: 20px;">
+    <div id="terminal-content" style="max-width: 700px; border: 1px solid #39FF14; padding: 40px; box-shadow: 0 0 30px rgba(57, 255, 20, 0.1); position: relative; overflow: hidden;">
+      <h1 style="text-shadow: 0 0 10px #39FF14; margin-bottom: 30px; letter-spacing: 3px;">[ SYSTEM BOOT: THE ASTROPHAGE ]</h1>
+
+      <div id="input-section">
+        <p style="letter-spacing: 2px; margin-bottom: 20px;">IDENTIFY PILOT_</p>
+        <input type="text" id="pilot-name" placeholder="TYPE NAME..." autocomplete="off" style="background: transparent; border: 1px solid #39FF14; color: #39FF14; padding: 12px; font-size: 1.3rem; text-align: center; outline: none; width: 80%; margin-bottom: 25px; text-transform: uppercase;">
+        <br>
+        <button type="button" id="start-btn" style="background: #39FF14; color: black; border: none; padding: 12px 40px; cursor: pointer; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; transition: 0.3s;">COMMENCE</button>
+      </div>
+
+      <div id="narrative-section" style="display: none; text-align: left; line-height: 1.8; font-size: 1.15rem;">
+        <p id="typewriter-text" style="min-height: 150px;"></p>
+        <p id="continue-prompt" style="text-align: center; color: #fff; margin-top: 30px; display: none; animation: blink 1s infinite; font-weight: bold; cursor: pointer;">[ PRESS ANY KEY OR CLICK HERE TO INITIALIZE SIMULATION ]</p>
+      </div>
+    </div>
+  </div>
+  <canvas id="vibe-portal-overlay" style="position: fixed; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100;"></canvas>
+  <style>
+    #continue-prompt { cursor: pointer !important; }
+    @keyframes blink { 50% { opacity: 0; } }
+    #start-btn:hover { background: #fff; box-shadow: 0 0 20px #fff; }
+  </style>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+---
+alwaysApply: true
+---
+
+# Astrophage Game — Cursor Rules
+
+## FIRST ACTION (mandatory before any code)
+Read this file completely: .claude/skills/phaser4-gamedev/SKILL.md
+Then read: assets/index.json
+Do both before writing a single line of game code.
+
+## Engine & Stack
+- Phaser 3.87 ONLY — CDN: https://cdnjs.cloudflare.com/ajax/libs/phaser/3.87.0/phaser.min.js
+- Reason: Phaser 4 is beta and unstable. Use Phaser 3.
+- Vanilla JavaScript — NO TypeScript, NO React, NO Vue, NO build tools
+- All scenes loaded via classic <script> tags in index.html
+- NO import maps, NO ES modules, NO npm
+
+## Project Paths
+- Root: E:\VVVGame\
+- Assets: E:\VVVGame\assets\ (see assets/index.json for full map)
+- Scenes: E:\VVVGame\js\ (one file per scene)
+- Entry: E:\VVVGame\index.html
+
+## GLB Files Are 3D — Phaser Cannot Load Them
+- musclecar.glb → use Rectangle(0,0,48,90) colored #444, label "CAR"
+- spaceship.glb → use Rectangle(0,0,50,80) colored #336699, label "SHIP"
+- alien_spaceship_with_fusion_core.glb → Rectangle colored #336633, label "ROCKY"
+- rocket3.glb → Rectangle(0,0,40,100) colored #aaaaaa, label "MARY"
+- girl-pixel.glb → Rectangle(0,0,32,64) colored #ffffff, label "EVA"
+- When real PNG sprites are available, swap the rectangle — never refactor architecture
+
+## Exhaust VFX
+- Use Phaser particle emitter — do NOT load the PNG sheets as spritesheets yet
+- Particle config: orange/grey circles, lifespan 400ms, speed 80, scale 0.3→0
+- Attach emitter below car/ship, offset y +45
+
+## Audio
+- Use Howler.js for audio (already in index.html)
+- MP3 path pattern: assets/spaceship_sounds/spaceship/mp3/
+- Available categories: engine, explosion, laser, utility
+- Always check AG.settings.audio before playing — Howler.mute(!AG.settings.audio)
+
+## Shared State — window.AG (globals.js)
+- NEVER create new global variables — use window.AG only
+- NEVER use localStorage for mid-game state
+- Pass data between scenes via this.scene.start('SceneName', { data })
+
+## Scene Build Order — ONE SCENE PER CURSOR SESSION
+1. SceneGym ← build and test this FIRST, nothing else
+2. SceneMenu
+3. SceneCinematic
+4. ScenePhase1 (movement + road only first, no obstacles)
+5. ScenePhase1 (add obstacles)
+6. ScenePhase1 (add humans + camera pan)
+7. SceneConversation
+8. ScenePhase2 (solo ship + small enemies)
+9. ScenePhase2 (Rocky arrival + 2P mode + boss)
+10. ScenePhase3
+11. SceneGameOver
+
+## Always Use Delta for Movement
+- CORRECT: this.player.x += this.speed * (delta / 1000)
+- WRONG: this.player.x += this.speed
+
+## HUD System
+- Use a parallel Phaser Scene for HUD (key: 'SceneHUD')
+- Launch it alongside gameplay: this.scene.launch('SceneHUD')
+- Never put HUD elements inside gameplay scenes
+
+## Physics
+- Use arcade physics for all moving objects
+- Enable: physics: { default: 'arcade', arcade: { gravity: { y:0 }, debug: false }}
+- Use this.physics.add.overlap() for damage detection (not collider)
+- Use object pools (Phaser Groups) for bullets and obstacles — never create/destroy each frame
+
+## DO NOT
+- Build more than 1 scene per session
+- Use Three.js (it caused the previous broken build)
+- Use position:fixed in any HTML overlay
+- Hardcode asset paths — always reference assets/index.json
+- Use frameWidth/frameHeight for the GLB files (they are not spritesheets)

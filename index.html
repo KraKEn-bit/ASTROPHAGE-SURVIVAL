@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Hail Mary</title>
+    <script async src="https://vibejam.cc/2026/widget.js"></script>
+    <style>
+        body {
+            margin: 0; background: #02050a; color: #a9c2db;
+            font-family: "Share Tech Mono", monospace;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;
+        }
+        .terminal {
+            border: 2px solid #4a90e2; padding: 40px; width: 600px;
+            box-shadow: 0 0 30px rgba(74, 144, 226, 0.2);
+            background: rgba(5, 10, 20, 0.95);
+        }
+        input {
+            background: transparent; border: none; border-bottom: 2px solid #2ed573;
+            color: #2ed573; font-family: inherit; font-size: 20px;
+            outline: none; width: 200px; text-transform: uppercase;
+        }
+        button {
+            background: #4a90e2; color: #000; border: none; padding: 10px 20px;
+            font-family: inherit; font-weight: bold; cursor: pointer; margin-top: 20px;
+            width: 100%; font-size: 18px;
+            transition: background 0.3s;
+        }
+        button:hover { background: #2ed573; }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="terminal">
+        <h1 style="color: #4a90e2; margin-top: 0;">[ HAIL MARY OS : BOOT SEQUENCE ]</h1>
+        <p>SYSTEM STARTUP... <span style="color: #2ed573;">OK</span></p>
+        <p>LIFE SUPPORT... <span style="color: #2ed573;">OK</span></p>
+        <p>MEMORY BANKS... <span style="color: #ff5252;">CORRUPTED</span></p>
+        <br>
+        <p>PLEASE ENTER OPERATOR DESIGNATION:</p>
+        > <input type="text" id="username-input" maxlength="12" autocomplete="off" autofocus>
+        <button onclick="startGame()">INITIALIZE LAUNCH</button>
+    </div>
+
+    <script>
+        // --- VIBE JAM WEBRING AUTO-BYPASS ---
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("portal") === "true") {
+            // Player came from a portal! Grab their data and bypass the menu.
+            let incomingName = urlParams.get("username") || "JAM_PILOT";
+            let incomingRef = urlParams.get("ref") || "";
+            let incomingSpeed = urlParams.get("speed") || "";
+
+            // Build the forwarding URL
+            let forwardUrl = `./phase1-threejs/index.html?username=${encodeURIComponent(incomingName)}&portal=true`;
+            if (incomingRef) forwardUrl += `&ref=${encodeURIComponent(incomingRef)}`;
+            if (incomingSpeed) forwardUrl += `&speed=${encodeURIComponent(incomingSpeed)}`;
+
+            // Instantly jump to Phase 1
+            window.location.href = forwardUrl;
+        } else {
+            const bootName = urlParams.get("username");
+            if (bootName && bootName.trim()) {
+                const input = document.getElementById("username-input");
+                if (input) input.value = bootName.trim().toUpperCase().slice(0, 12);
+            }
+        }
+
+        function startGame() {
+            let name = document.getElementById("username-input").value.trim().toUpperCase();
+            if (!name) name = "PILOT";
+            window.location.href = `./phase1-threejs/index.html?username=${encodeURIComponent(name)}`;
+        }
+
+        document.getElementById("username-input").addEventListener("keypress", (e) => {
+            if (e.key === "Enter") startGame();
+        });
+    </script>
+</body>
+</html>

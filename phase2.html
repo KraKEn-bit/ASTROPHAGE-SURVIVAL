@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phase 2 - Eva and Mary</title>
+  <script async src="https://vibej.am/2026/widget.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+    canvas {
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    window.location.replace(`./phase2-eva.html${window.location.search || ""}`);
+  </script>
+  <div id="warning-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 5, 5, 0.95); color: #ff003c; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; font-family: 'Courier New', Courier, monospace; text-align: center; padding: 20px;">
+    <div style="border: 2px solid #ff003c; padding: 40px; max-width: 700px; box-shadow: 0 0 30px rgba(255, 0, 60, 0.3); background: #000;">
+      <h1 style="text-shadow: 0 0 15px #ff003c; letter-spacing: 4px; animation: blink 1s infinite;">[ EVA TASK FORCE LOCKED ON ]</h1>
+      <p id="pilot-warning" style="font-size: 1.2rem; line-height: 1.8; margin: 28px 0; color: #fff;"></p>
+      <p style="color: #39ff14; font-weight: bold; font-size: 1.1rem; letter-spacing: 1px;">[ PRESS ENTER TO DEPLOY ]</p>
+    </div>
+  </div>
+  <style>@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }</style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.87.0/phaser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+  <script src="js/globals.js"></script>
+  <script src="js/ScenePhase1.js"></script>
+  <script src="js/SceneGameOver.js"></script>
+  <script>
+    const warningOverlay = document.getElementById("warning-overlay");
+    const params = new URLSearchParams(window.location.search);
+    const pilotName = params.get("username") || "UNKNOWN PILOT";
+    const pilotWarningEl = document.getElementById("pilot-warning");
+    if (pilotWarningEl) {
+      pilotWarningEl.innerText = `Captain ${pilotName}, Commander Eva is in pursuit. Reach Mary and survive the highway assault.`;
+    }
+
+    const config = {
+      type: Phaser.AUTO,
+      width: 1280,
+      height: 720,
+      backgroundColor: "#0a0a12",
+      scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+      },
+      physics: {
+        default: "arcade",
+        arcade: { gravity: { y: 0 }, debug: false }
+      },
+      scene: [ScenePhase1, SceneGameOver]
+    };
+    let game = null;
+    const startGame = () => {
+      if (warningOverlay) warningOverlay.style.display = "none";
+      if (!game) game = new Phaser.Game(config);
+    };
+
+    window.addEventListener("keydown", (e) => {
+      if (warningOverlay && warningOverlay.style.display !== "none" && e.code === "Enter") {
+        startGame();
+      }
+    });
+  </script>
+</body>
+</html>

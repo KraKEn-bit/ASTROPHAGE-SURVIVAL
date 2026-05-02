@@ -1,0 +1,41 @@
+{
+  "_note": "MASTER ASSET MANIFEST — All Cursor sessions read this first. Never hardcode paths.",
+
+  "placeholders": {
+    "_note": "GLB files cannot be loaded by Phaser 3. Use these rectangle specs instead.",
+    "car":    { "glb": "assets/musclecar.glb",   "placeholder": "Rectangle 48x90 #444444", "label": "CAR"   },
+    "ship":   { "glb": "assets/spaceship.glb",   "placeholder": "Rectangle 50x80 #336699", "label": "SHIP"  },
+    "rocky":  { "glb": "assets/alien_spaceship_with_fusion_core.glb", "placeholder": "Rectangle 55x85 #336633", "label": "ROCKY" },
+    "mary":   { "glb": "assets/rocket3.glb",     "placeholder": "Rectangle 40x100 #aaaaaa", "label": "MARY" },
+    "eva":    { "glb": "assets/girl-pixel.glb",  "placeholder": "Rectangle 32x64 #ffddcc", "label": "EVA"   }
+  },
+
+  "vfx": {
+    "exhaust_01_frames": "assets/Animated_Exhaust_pixel_Pack_Free/Animated_Exhaust_pixel_Pack_Free/Exhaust_01/",
+    "exhaust_02_frames": "assets/Animated_Exhaust_pixel_Pack_Free/Animated_Exhaust_pixel_Pack_Free/Exhaust_02/",
+    "exhaust_03_frames": "assets/Animated_Exhaust_pixel_Pack_Free/Animated_Exhaust_pixel_Pack_Free/Exhaust_03/",
+    "exhaust_01_gif":    "assets/Animated_Exhaust_pixel_Pack_Free/Animated_Exhaust_pixel_Pack_Free/GIF/Exhaust_01.gif",
+    "exhaust_02_gif":    "assets/Animated_Exhaust_pixel_Pack_Free/Animated_Exhaust_pixel_Pack_Free/GIF/Exhaust_02.gif",
+    "exhaust_03_gif":    "assets/Animated_Exhaust_pixel_Pack_Free/Animated_Exhaust_pixel_Pack_Free/GIF/Exhaust_03.gif",
+    "_usage": "Use Phaser particle emitter for exhaust — not these files directly until sprite sheet is ready"
+  },
+
+  "audio": {
+    "_format": "Use MP3. WAV as fallback.",
+    "engine":    { "mp3_dir": "assets/spaceship_sounds/spaceship/mp3/engine/",    "wav_dir": "assets/spaceship_sounds/spaceship/wave/engine/"    },
+    "explosion": { "mp3_dir": "assets/spaceship_sounds/spaceship/mp3/explosion/", "wav_dir": "assets/spaceship_sounds/spaceship/wave/explosion/" },
+    "laser":     { "mp3_dir": "assets/spaceship_sounds/spaceship/mp3/laser/",     "wav_dir": "assets/spaceship_sounds/spaceship/wave/laser/"     },
+    "utility":   { "mp3_dir": "assets/spaceship_sounds/spaceship/mp3/utility/",   "wav_dir": "assets/spaceship_sounds/spaceship/wave/utility/"   },
+    "_usage": "Scan the directory at runtime or hardcode first file found. Respect AG.settings.audio."
+  },
+
+  "sprites_needed": {
+    "_note": "These PNGs do not exist yet. Download from itch.io and add here when ready.",
+    "car_topdown":     "assets/sprites/car_topdown.webp",
+    "human_walk":      "assets/sprites/human_walk.png",
+    "astrophage_small":"assets/sprites/astrophage_small.png",
+    "astrophage_boss": "assets/sprites/astrophage_boss.png",
+    "eva_idle":        "assets/sprites/eva_idle.png",
+    "rocky_idle":      "assets/sprites/rocky_idle.png"
+  }
+}

@@ -1,0 +1,12 @@
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editors / IDE
+.idea/
+*.swp
+*.swo
+
+# Logs / temp
+*.log
