@@ -43,9 +43,9 @@ python -m http.server 8080
 ## **OR**
 You can run through my itch.io published game or through Cursor Vibe Jam's web browser.
 
-**🎮 Play directly in your browser: https://lnkd.in/gstmHThJ (Published in itch.io. Check it out!)**
+**🎮 Play directly in your browser: [From Itch.io](https://krakenis.itch.io/astrophage-survival) (Published in itch.io. Check it out!)**
 
-**🏆 Explore the Vibe Jam 2026 entries: https://vibej.am/2026/ (You can find my entry via the search bar!)**
+**🏆 Explore the Vibe Jam 2026 entries: [Cursor Vibe Jam 2026](https://vibej.am/2026/) (You can find my entry via the search bar!)**
 
 
 ## Tech stack
