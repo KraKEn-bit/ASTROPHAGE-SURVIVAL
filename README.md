@@ -8,7 +8,7 @@ A browser sci-fi survival experience built around **Phaser 3** (2D arcade physic
 
 ## Screenshots
 
-Files live in **`screenshots/`** at the repo root.
+
 
 | | |
 |:-:|:-:|
