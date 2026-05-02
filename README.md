@@ -12,12 +12,12 @@ Files live in **`screenshots/`** at the repo root.
 
 | | |
 |:-:|:-:|
-| **1** — Phase-1 | **2** — Phase-2 |
+| **Phase-1** | **Phase-2** |
 | ![](./screenshots/image-1.png) | ![](./screenshots/image-2.png) |
 
 | | |
 |:-:|:-:|
-| **3** — Phase-3 | **4** — Phase-4 |
+| **Phase-3** | **Phase-4** |
 | ![](./screenshots/Image-4.png) | ![](./screenshots/image-5.png) |
 
 _On case-sensitive systems (e.g. Linux), keep the exact filename `Image-4.png` or rename it to `image-4.png` and update this table._
