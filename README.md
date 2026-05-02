@@ -20,7 +20,7 @@ A browser sci-fi survival experience built around **Phaser 3** (2D arcade physic
 | **Phase-3** | **Phase-4** |
 | ![](./screenshots/Image-4.png) | ![](./screenshots/image-5.png) |
 
-_On case-sensitive systems (e.g. Linux), keep the exact filename `Image-4.png` or rename it to `image-4.png` and update this table._
+
 
 ---
 
